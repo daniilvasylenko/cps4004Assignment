@@ -67,14 +67,32 @@ for warehouse in warehouses:
     cur.execute("INSERT OR IGNORE INTO warehouses(name, location) VALUES (?, ?)", warehouse)
 
 inventory = [
-    ("Electronics", "Personal computer", "10"),
-    ("Kitchen equipment", "Plates", "500"),
-    ("Furniture", "Double bed", "20"),
-    ("Alcohol", "Whiskey (Jameson)", "100")
+    ("Electronics", "Personal computer", 10),
+    ("Kitchen equipment", "Plates", 500),
+    ("Furniture", "Double bed", 20),
+    ("Alcohol", "Whiskey (Jameson)", 100)
 ]
 
-for inventories in inventory:
-    cur.execute("INSERT OR IGNORE INTO inventories(item_name")
+for item in inventory:
+    cur.execute("INSERT OR IGNORE INTO inventory_items(item_name, description, reorder_level) VALUES (?, ?, ?)", item)
+
+warehouse_inventory_data = [
+    (1, 1, 32, "Zone A"),
+    (1, 2, 2200, "Zone F"),
+    (2, 3, 23, "Zone B"),
+    (2, 4, 132, "Zone C")
+]
+for data in warehouse_inventory_data:
+    cur.execute("INSERT OR IGNORE INTO warehouse_inventory(warehouse_id, item_id, quantity, item_location) VALUES (?, ?, ?, ?)", data)
+
+activity = [
+    (1, 1, "Inbound", 5, "5 additional personal computers"),
+    (1, 2, "Outbound", 300, "A delivery to local restaurant in London"),
+    (2, 3, "Transfer", 20, "Transfer of equipment to London Hub")
+]
+for activities in activity:
+    cur.execute("INSERT OR IGNORE INTO warehouse_activity(warehouse_id, item_id, activity_type, quantity, notes) VALUES (?, ?, ?, ?, ?)", activities)
+
 
 conn.commit()
 
