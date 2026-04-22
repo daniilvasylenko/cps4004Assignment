@@ -39,7 +39,7 @@ driver_id INTEGER PRIMARY KEY AUTOINCREMENT,
 name TEXT NOT NULL,
 phone TEXT,
 license_number TEXT NOT NULL UNIQUE,
-shift_assignment TEXT
+shift_assignment TEXT NOT NULL CHECK (shift_assignment IN('Morning', 'Afternoon', 'Evening', 'Night'))
 );
 
 CREATE TABLE IF NOT EXISTS shipments(
