@@ -1,4 +1,6 @@
 import sqlite3
+from security import hash_password
+
 
 conn = sqlite3.connect("northshore.db")
 cur = conn.cursor()
@@ -8,14 +10,15 @@ with open("schema.sql", "r", encoding="utf-8") as file:
     schema_sql = file.read()
 
 cur.executescript(schema_sql)
+conn.commit()
 
 print("Database created successfully")
 
 users = [
-    ("admin", "admin123", "admin"),
-    ("manager", "manager123", "manager"),
-    ("warehouse_staff", "staff123", "warehouse_staff"),
-    ("driver", "driver123", "driver"),
+    ("admin", hash_password("admin123"), "admin"),
+    ("manager", hash_password("manager123"), "manager"),
+    ("warehouse_staff", hash_password("staff123"), "warehouse_staff"),
+    ("driver", hash_password("driver123"), "driver"),
 ]
 
 for row in users:
@@ -28,13 +31,6 @@ customers = [
 for customer in customers:
     cur.execute("INSERT OR IGNORE INTO customers(name, phone, email, address) VALUES (?, ?, ?, ?)", customer)
 
-shipments = [
-    ("ORD001", 2, 1, "Kitchen equipment", "Pending", "Unpaid")
-]
-
-for shipment in shipments:
-    cur.execute("INSERT OR IGNORE INTO shipments(order_number, sender_customer_id, receiver_customer_id, item_description, delivery_status, payment_status) VALUES (?, ?, ?, ?, ?, ?)", shipment)
-    cur.execute("UPDATE shipments SET assigned_driver_id = 1, assigned_vehicle_id = 1 WHERE order_number = ?", (shipment[0], ))
 
 
 drivers = [
@@ -52,6 +48,14 @@ vehicles = [
 ]
 for vehicle in vehicles:
     cur.execute("INSERT OR IGNORE INTO vehicles(registration_number, capacity, maintenance_date, availability_status) VALUES (?, ?, ?, ?)", vehicle)
+
+shipments = [
+    ("ORD001", 2, 1, "Kitchen equipment", "Pending", "Unpaid")
+]
+
+for shipment in shipments:
+    cur.execute("INSERT OR IGNORE INTO shipments(order_number, sender_customer_id, receiver_customer_id, item_description, delivery_status, payment_status) VALUES (?, ?, ?, ?, ?, ?)", shipment)
+    cur.execute("UPDATE shipments SET assigned_driver_id = 1, assigned_vehicle_id = 1 WHERE order_number = ?", (shipment[0], ))
 
 incidents = [
     (1, "Delay", "Busy traffic", "Resolved")
